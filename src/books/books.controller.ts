@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Put, Param, Delete, NotFoundException } from '@nestjs/common';
+import { Controller, Get, Post, Body, Put, Param, Delete } from '@nestjs/common';
 import { BooksService } from './books.service';
 import { CreateBookDto } from './dto/create-book.dto';
 import { Book } from '../common/interfaces/book.interface';
@@ -14,11 +14,7 @@ export class BookController {
 
   @Get(':id')
   getBookById(@Param('id') id: string): Book {
-    const book = this.bookService.getBookById(id);
-    if (!book) {
-      throw new NotFoundException(`Book with ID ${id} not found`);
-    }
-    return book;
+    return this.bookService.getBookById(id);
   }
 
   @Post()
@@ -28,19 +24,11 @@ export class BookController {
 
   @Put(':id')
   updateBook(@Param('id') id: string, @Body() updateBookDto: CreateBookDto): Book {
-    const updatedBook = this.bookService.updateBook(id, updateBookDto);
-    if (!updatedBook) {
-      throw new NotFoundException(`Book with ID ${id} not found`);
-    }
-    return updatedBook;
+    return this.bookService.updateBook(id, updateBookDto);
   }
 
   @Delete(':id')
   deleteBook(@Param('id') id: string): Book {
-    const deletedBook = this.bookService.deleteBook(id);
-    if (!deletedBook) {
-      throw new NotFoundException(`Book with ID ${id} not found`);
-    }
-    return deletedBook;
+    return this.bookService.deleteBook(id);
   }
 }
