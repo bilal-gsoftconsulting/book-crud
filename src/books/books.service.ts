@@ -33,7 +33,6 @@ export class BooksService {
       this.books[index] = updatedBook;
       return updatedBook;
     }
-    return undefined;
   }
 
   deleteBook(id: string): Book {
@@ -42,6 +41,5 @@ export class BooksService {
       const deletedBook = this.books.splice(index, 1)[0];
       return deletedBook;
     }
-    return undefined;
   }
 }
