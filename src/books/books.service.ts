@@ -1,45 +1,27 @@
 import { Injectable } from '@nestjs/common';
+import { InjectModel } from '@nestjs/mongoose';
+import { Model } from 'mongoose';
 import { Book } from '../common/interfaces/book.interface';
 import { CreateBookDto } from './dto/create-book.dto';
 
 @Injectable()
 export class BooksService {
-  private readonly books: Book[] = [];
+  constructor(@InjectModel('Book') private readonly bookModel: Model<Book>) {}
 
-  getAllBooks(): Book[] {
-    return this.books;
+  async create(createBookDto: CreateBookDto): Promise<Book> {
+    const createdBook = new this.bookModel(createBookDto);
+    return createdBook.save();
   }
 
-  getBookById(id: string): Book {
-    return this.books.find(book => book.id === id);
+  async findAll(): Promise<Book[]> {
+    return this.bookModel.find().exec();
   }
 
-  createBook(createBookDto: CreateBookDto): Book {
-    const newBook: Book = {
-      id: (this.books.length + 1).toString(), 
-      ...createBookDto,
-    };
-    this.books.push(newBook);
-    return newBook;
+  async findOne(id: string): Promise<Book> {
+    return this.bookModel.findById(id).exec();
   }
 
-  updateBook(id: string, updateBookDto: CreateBookDto): Book {
-    const index = this.books.findIndex(book => book.id === id);
-    if (index !== -1) {
-      const updatedBook: Book = {
-        id,
-        ...updateBookDto,
-      };
-      this.books[index] = updatedBook;
-      return updatedBook;
-    }
-  }
-
-  deleteBook(id: string): Book {
-    const index = this.books.findIndex(book => book.id === id);
-    if (index !== -1) {
-      const deletedBook = this.books.splice(index, 1)[0];
-      return deletedBook;
-    }
+  async update(id: string, updateBookDto: CreateBookDto): Promise<Book> {
+    return this.bookModel.findByIdAndUpdate(id, updateBookDto, { new: true }).exec();
   }
 }
